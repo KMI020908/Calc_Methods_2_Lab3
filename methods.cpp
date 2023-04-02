@@ -4480,3 +4480,79 @@ std::size_t numOfXIntervals, std::size_t numOfTimeIntervals, Type(*U0)(Type x), 
     file.close();
     return IS_CLOSED;
 }
+
+template<typename Type>
+FILE_FLAG getRealSpeedEstimateWaveEq(const std::string &speedFile, Type (*realSol)(Type t, Type x), Type a, Type L, Type timeEnd,
+std::size_t numOfXIntervals, std::size_t numOfTimeIntervals, Type(*U0)(Type x), Type(*Ut0)(Type x), Type(*bound1)(Type t), Type(*bound2)(Type t)){
+    
+    // Решение при текущих шагах
+    std::size_t nX = numOfXIntervals;
+    std::size_t nTau = numOfTimeIntervals;
+    Type h = L / nX;
+    Type tau = timeEnd / nTau;
+    solveHeatEquation("tmp1.txt", a, L, timeEnd, nX, nTau, U0, Ut0, bound1, bound2); 
+
+    std::size_t devCoeffTau = 2;
+    
+    // Уменьшаем шаги
+    nX *= 2;
+    nTau *= devCoeffTau;
+    solveHeatEquation("tmp2.txt", a, L, timeEnd, nX, nTau, U0, Ut0, bound1, bound2);
+    
+    // Открываем временные файлы
+    std::ifstream file1, file2;
+    std::ofstream resFile;
+    file1.open("tmp1.txt");
+    if (!file1.is_open()){
+        return IS_CLOSED;
+    }
+    file2.open("tmp2.txt"); 
+    if (!file2.is_open()){
+        file1.close();
+        return IS_CLOSED;
+    }
+    resFile.open(speedFile);
+    if (!resFile.is_open()){
+        file1.close();
+        file2.close();
+        return IS_CLOSED;
+    }
+    
+    std::string dummyLine;
+    std::vector<Type> f1(numOfXIntervals + 1);
+    std::vector<Type> f2(2 * numOfXIntervals + 1);
+    std::vector<Type> sp(numOfXIntervals + 1);
+
+    for (std::size_t i = 0; i < numOfXIntervals + 1; i++){
+        file1 >> f1[i]; 
+    }
+    for (std::size_t i = 0; i < 2 * numOfXIntervals + 1; i++){
+        file2 >> f2[i]; 
+    }
+    for (std::size_t i = 0; i < numOfXIntervals + 1; i++){
+        sp[i] = std::abs((f1[i] - realSol(0.0, i * h)) / (f2[2 * i] - realSol(0.0, i * h)));
+        resFile << sp[i] << '\t';
+    }
+        resFile << '\n';
+    for (std::size_t j = 1; j < numOfTimeIntervals + 1; j++){
+        for (std::size_t i = 0; i < numOfXIntervals + 1; i++){
+            file1 >> f1[i]; 
+        }
+        for (std::size_t i = 0; i < devCoeffTau; i++){
+            std::getline(file2, dummyLine);
+        }
+        for (std::size_t i = 0; i < 2 * numOfXIntervals + 1; i++){
+            file2 >> f2[i]; 
+        }
+        for (std::size_t i = 0; i < numOfXIntervals + 1; i++){
+            sp[i] = std::abs((f1[i] - realSol(j * tau, i * h)) / (f2[2 * i] - realSol(j * tau, i * h)));
+            resFile << sp[i] << '\t';
+        }
+        resFile << '\n';
+    }
+
+    file1.close(); file2.close();
+    std::remove("tmp1.txt"); std::remove("tmp2.txt"); 
+    resFile.close();
+    return IS_CLOSED;
+}

@@ -388,4 +388,8 @@ template<typename Type>
 FILE_FLAG solveWaveEquation(const std::string &solutionFile, Type a, Type L, Type timeEnd,
 std::size_t numOfXIntervals, std::size_t numOfTimeIntervals, Type(*U0)(Type x), Type(*Ut0)(Type x), Type(*bound1)(Type t), Type(*bound2)(Type t));
 
+template<typename Type>
+FILE_FLAG getRealSpeedEstimateWaveEq(const std::string &speedFile, Type (*realSol)(Type t, Type x), Type a, Type L, Type timeEnd,
+std::size_t numOfXIntervals, std::size_t numOfTimeIntervals, Type(*U0)(Type x), Type(*Ut0)(Type x), Type(*bound1)(Type t), Type(*bound2)(Type t));
+
 #endif

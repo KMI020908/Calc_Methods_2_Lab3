@@ -31,26 +31,10 @@ std::size_t numOfXIntervals, std::size_t numOfTimeIntervals,  Type(*U0)(Type x),
 
 // Оценка сходимости при разных sigma при известном аналитическом решении
 template<typename Type>
-void getAllRealSpeedEstimates(std::size_t numOfEq, Type (*realSol)(Type t, Type x), Type rho, Type c, Type(*K)(Type x), Type L, Type timeEnd,
-std::size_t numOfXIntervals, std::size_t numOfTimeIntervals, Type anotherSigma, CONDS_FLAG flag, Type(*T0)(Type x), Type(*bound1)(Type t), Type(*bound2)(Type t)){ 
-    std::string SOLUTION_FILE;
-    Type sigma;
-
-    sigma = 0.0;
-    SOLUTION_FILE = getFileNameHeatEq(numOfEq, flag, sigma, "speed", "SpeedEstLinear");
-    getRealSpeedEstimateHeatEq(SOLUTION_FILE, realSol, rho, c, K, L, timeEnd, numOfXIntervals, numOfTimeIntervals, sigma, flag, T0, bound1, bound2);
-
-    sigma = 1.0;
-    SOLUTION_FILE = getFileNameHeatEq(numOfEq, flag, sigma, "speed", "SpeedEstLinear");
-    getRealSpeedEstimateHeatEq(SOLUTION_FILE, realSol, rho, c, K, L, timeEnd, numOfXIntervals, numOfTimeIntervals, sigma, flag, T0, bound1, bound2);
-
-    sigma = 0.50;
-    SOLUTION_FILE = getFileNameHeatEq(numOfEq, flag, sigma, "speed", "SpeedEstLinear");
-    getRealSpeedEstimateHeatEq(SOLUTION_FILE, realSol, rho, c, K, L, timeEnd, numOfXIntervals, numOfTimeIntervals, sigma, flag, T0, bound1, bound2);
-
-    sigma = anotherSigma;
-    SOLUTION_FILE = getFileNameHeatEq(numOfEq, flag, sigma, "speed", "SpeedEstLinear");
-    getRealSpeedEstimateHeatEq(SOLUTION_FILE, realSol, rho, c, K, L, timeEnd, numOfXIntervals, numOfTimeIntervals, sigma, flag, T0, bound1, bound2);
+void getAllRealSpeedEstimates(std::size_t numOfEq, Type (*realSol)(Type t, Type x), Type a, Type L, Type timeEnd,
+std::size_t numOfXIntervals, std::size_t numOfTimeIntervals, Type(*U0)(Type x), Type(*Ut0)(Type x), Type(*bound1)(Type t), Type(*bound2)(Type t)){ 
+    std::string SOLUTION_FILE = "D:\\Calc_Methods_2\\Lab3\\speedEstCrossScheme\\speed" + std::to_string(numOfEq) + ".txt";
+    getRealSpeedEstimateWaveEq(SOLUTION_FILE, realSol, a, L, timeEnd, numOfXIntervals, numOfTimeIntervals, U0, Ut0, bound1, bound2);
 }
 
 
@@ -80,6 +64,21 @@ void temp_main(){
     numOfTimeIntervals = 500;
     getWaveEquationSolution(numOfEq, a, L, timeEnd, numOfXIntervals, numOfTimeIntervals, U0, Ut0, bound1, bound2);
 
+    // Второй тест из методички
+    numOfEq = 2;
+    a = 1.0;
+
+    L = 1.0;
+    timeEnd = 5.0;
+
+    U0 = U0_2;
+    Ut0 = Ut0_2;
+    bound1 = bound1_2;
+    bound2 = bound2_2;
+
+    numOfXIntervals = 100;
+    numOfTimeIntervals = 500;
+    getWaveEquationSolution(numOfEq, a, L, timeEnd, numOfXIntervals, numOfTimeIntervals, U0, Ut0, bound1, bound2);
 }
 
 int main(){

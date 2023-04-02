@@ -21,4 +21,22 @@
         return 0.0;
     }
 
+    // Второй тест из методички
+    template<typename Type>
+    Type U0_2(Type x){
+        return x * (1.0 - x);
+    }
+    template<typename Type>
+    Type Ut0_2(Type x){
+        return 0.0;
+    }
+    template<typename Type>
+    Type bound1_2(Type t){
+        return 0.0;
+    }
+    template<typename Type>
+    Type bound2_2(Type t){
+        return 0.0;
+    }
+
 #endif
