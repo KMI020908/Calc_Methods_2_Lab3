@@ -4423,8 +4423,13 @@ std::size_t numOfXIntervals, std::size_t numOfTimeIntervals, Type sigma, CONDS_F
 // Лаб 3
 
 template<typename Type>
+    Type f2(Type x){
+        return - M_PI * M_PI * std::sin(M_PI * x);
+    }
+
+template<typename Type>
 FILE_FLAG solveWaveEquation(const std::string &solutionFile, Type a, Type L, Type timeEnd,
-std::size_t numOfXIntervals, std::size_t numOfTimeIntervals, Type(*U0)(Type x), Type(*Ut0)(Type x), Type(*bound1)(Type t), Type(*bound2)(Type t)){
+std::size_t numOfXIntervals, std::size_t numOfTimeIntervals, Type(*U0)(Type x), Type(*Ut0)(Type x), Type(*bound1)(Type t), Type(*bound2)(Type t), Type x0){
 
     // Шаги сеток по пространству и времени соответсвенно 
     Type h = L / numOfXIntervals;
@@ -4434,7 +4439,7 @@ std::size_t numOfXIntervals, std::size_t numOfTimeIntervals, Type(*U0)(Type x), 
     // Заполнение нулевого временного слоя 
     std::vector<Type> prevU(numOfXIntervals + 1); // y_(j - 1)
     for (std::size_t i = 0; i < numOfXIntervals + 1; i++){
-        prevU[i] = U0(i * h);
+        prevU[i] = U0(x0 + i * h);
     }
     
     // Создание файла для вывода данных
@@ -4452,7 +4457,7 @@ std::size_t numOfXIntervals, std::size_t numOfTimeIntervals, Type(*U0)(Type x), 
     std::vector<Type> tempU(numOfXIntervals + 1); // y_j
     tempU[0] = bound1(tau);
     for (std::size_t i = 1; i < numOfXIntervals; i++){
-        tempU[i] = prevU[i] + tau * Ut0(i * h) + coeff * (prevU[i - 1] - 2.0 * prevU[i] + prevU[i + 1]) / 2.0;
+        tempU[i] = prevU[i] + tau * Ut0(x0 + i * h) + coeff * (prevU[i - 1] - 2.0 * prevU[i] + prevU[i + 1]) / 2.0;
     }
     tempU[numOfXIntervals] = bound2(tau);
 
@@ -4490,14 +4495,14 @@ std::size_t numOfXIntervals, std::size_t numOfTimeIntervals, Type(*U0)(Type x), 
     std::size_t nTau = numOfTimeIntervals;
     Type h = L / nX;
     Type tau = timeEnd / nTau;
-    solveHeatEquation("tmp1.txt", a, L, timeEnd, nX, nTau, U0, Ut0, bound1, bound2); 
+    solveWaveEquation("tmp1.txt", a, L, timeEnd, nX, nTau, U0, Ut0, bound1, bound2); 
 
-    std::size_t devCoeffTau = 2;
+    std::size_t devCoeffTau = 4;
     
     // Уменьшаем шаги
     nX *= 2;
     nTau *= devCoeffTau;
-    solveHeatEquation("tmp2.txt", a, L, timeEnd, nX, nTau, U0, Ut0, bound1, bound2);
+    solveWaveEquation("tmp2.txt", a, L, timeEnd, nX, nTau, U0, Ut0, bound1, bound2);
     
     // Открываем временные файлы
     std::ifstream file1, file2;
