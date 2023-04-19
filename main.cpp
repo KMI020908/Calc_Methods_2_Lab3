@@ -94,9 +94,9 @@ void temp_main(){
     bound1 = bound1_3;
     bound2 = bound2_3;
 
-    numOfXIntervals = 400;
-    numOfTimeIntervals = 500;
-    //getWaveEquationSolution(numOfEq, a, L, timeEnd, numOfXIntervals, numOfTimeIntervals, U0, Ut0, bound1, bound2, -2.0);
+    numOfXIntervals = 40;
+    numOfTimeIntervals = 50;
+    getWaveEquationSolution(numOfEq, a, L, timeEnd, numOfXIntervals, numOfTimeIntervals, U0, Ut0, bound1, bound2, -2.0);
     //getRealSpeedEstimate(numOfEq, realSolution2, a, L, timeEnd, numOfXIntervals, numOfTimeIntervals, U0, Ut0, bound1, bound2);
 
     // Второй тест из доп. задач

@@ -4460,6 +4460,10 @@ std::size_t numOfXIntervals, std::size_t numOfTimeIntervals, Type(*U0)(Type x), 
         tempU[i] = prevU[i] + tau * Ut0(x0 + i * h) + coeff * (prevU[i - 1] - 2.0 * prevU[i] + prevU[i + 1]) / 2.0;
     }
     tempU[numOfXIntervals] = bound2(tau);
+    for (std::size_t i = 0; i < numOfXIntervals + 1; i++){
+        file << tempU[i] << '\t';
+    }
+    file << '\n';
 
     // Заполнение оставшихся временных слоев
     std::vector<Type> nextU(numOfXIntervals + 1); // y_(j + 1)
